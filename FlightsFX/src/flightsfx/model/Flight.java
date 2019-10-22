@@ -2,6 +2,7 @@ package flightsfx.model;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Flight
 {
@@ -44,9 +45,10 @@ public class Flight
         this.destination = destination;
     }
 
-    public LocalDateTime getDepTimeAndDate()
+    public String getDepTimeAndDate()
     {
-        return depTimeAndDate;
+        DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return  depTimeAndDate.format(form);
     }
 
     public void setDepTimeAndDate(LocalDateTime depTimeAndDate)
@@ -54,9 +56,10 @@ public class Flight
         this.depTimeAndDate = depTimeAndDate;
     }
 
-    public LocalTime getFlightDuration()
+    public String getFlightDuration()
     {
-        return flightDuration;
+        DateTimeFormatter form = DateTimeFormatter.ofPattern("H:mm");
+        return  flightDuration.format(form);
     }
 
     public void setFlightDuration(LocalTime flightDuration)
@@ -67,11 +70,7 @@ public class Flight
     @Override
     public String toString()
     {
-        return "Flight{" +
-                "flightNumber='" + flightNumber + '\'' +
-                ", destination='" + destination + '\'' +
-                ", depTimeAndDate=" + depTimeAndDate +
-                ", flightDuration=" + flightDuration +
-                '}';
+        return flightNumber + ';' + destination + ';' + getDepTimeAndDate() +';'+
+                getFlightDuration();
     }
 }

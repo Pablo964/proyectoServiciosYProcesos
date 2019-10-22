@@ -8,27 +8,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="506.0" prefWidth="712.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="506.0" prefWidth="712.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="flightsfx.FXMLMainViewController">
    <children>
-      <TableView layoutX="9.0" layoutY="9.0" prefHeight="215.0" prefWidth="693.0">
+      <TableView fx:id="tableFlights" layoutX="9.0" layoutY="9.0" prefHeight="215.0" prefWidth="693.0">
          <columns>
-            <TableColumn prefWidth="168.0" text="Flight Number" />
-            <TableColumn prefWidth="190.0" text="Destination" />
-            <TableColumn prefWidth="172.0" text="Departure" />
-            <TableColumn prefWidth="181.0" text="Duration" />
+            <TableColumn fx:id="colFlightNumber" prefWidth="168.0" text="Flight Number" />
+            <TableColumn fx:id="colDestination" prefWidth="190.0" text="Destination" />
+            <TableColumn fx:id="colDeparture" prefWidth="172.0" text="Departure" />
+            <TableColumn fx:id="colDuration" prefWidth="181.0" text="Duration" />
          </columns>
       </TableView>
-      <TextField layoutX="172.0" layoutY="266.0" />
-      <TextField layoutX="431.0" layoutY="266.0" />
-      <TextField layoutX="172.0" layoutY="331.0" promptText="dd/mm/yyyy hh:mm" />
-      <TextField layoutX="431.0" layoutY="331.0" promptText="hh:mm" />
+      <TextField fx:id="flightNumber" layoutX="172.0" layoutY="266.0" />
+      <TextField fx:id="destination" layoutX="431.0" layoutY="266.0" />
+      <TextField fx:id="departure" layoutX="172.0" layoutY="331.0" promptText="dd/mm/yyyy hh:mm" />
+      <TextField fx:id="duration" layoutX="431.0" layoutY="331.0" promptText="hh:mm" />
       <Text layoutX="72.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Flight Number" />
-      <Text layoutX="83.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Departure" />
+      <Text layoutX="94.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Departure" />
       <Text layoutX="356.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destination" />
-      <Text layoutX="356.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" />
-      <Button layoutX="247.0" layoutY="467.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="Add" />
-      <Button layoutX="360.0" layoutY="467.0" mnemonicParsing="false" text="Delete" />
-      <ChoiceBox layoutX="85.0" layoutY="399.0" prefHeight="25.0" prefWidth="376.0" />
-      <Button layoutX="503.0" layoutY="399.0" mnemonicParsing="false" text="Apply Filter" />
+      <Text layoutX="369.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" />
+      <ChoiceBox fx:id="filter" layoutX="85.0" layoutY="399.0" prefHeight="25.0" prefWidth="376.0" />
+      <Button fx:id="buttonAdd" layoutX="625.0" layoutY="266.0" mnemonicParsing="false" onAction="#addFlight" prefHeight="25.0" prefWidth="51.0" text="Add" />
+      <Button fx:id="buttonDelete" layoutX="625.0" layoutY="331.0" mnemonicParsing="false" onAction="#deleteFlight" text="Delete" />
+      <Button fx:id="applyFilter" layoutX="506.0" layoutY="399.0" mnemonicParsing="false" text="Apply Filter" />
+      <Text fx:id="errorText" fill="#f81212" layoutX="14.0" layoutY="488.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+
    </children>
 </AnchorPane>

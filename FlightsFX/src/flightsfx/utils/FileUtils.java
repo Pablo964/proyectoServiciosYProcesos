@@ -2,10 +2,7 @@ package flightsfx.utils;
 
 import flightsfx.model.Flight;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,11 +12,13 @@ import java.util.List;
 
 public class FileUtils
 {
+    public static DateTimeFormatter timeFormatter =
+            DateTimeFormatter.ofPattern("H:mm");
+    public static DateTimeFormatter fmt =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
     public static List<Flight> loadFlights() throws IOException
     {
-        DateTimeFormatter fmt =
-                DateTimeFormatter.ofPattern("dd/mm/yyyy hh:mm");
-
         ArrayList<Flight> flights = new ArrayList<>();
 
         File file = new File("flights.txt");
@@ -33,15 +32,24 @@ public class FileUtils
             String destination = line.split(";")[1];
             LocalDateTime depTimeAndDate = LocalDateTime.parse(
                     line.split(";")[2], fmt);
-            LocalTime flightDuration = LocalTime.parse(line.split(";")[3]);
+            LocalTime flightDuration = LocalTime.parse(line.split(";")[3],
+                    timeFormatter);
             flights.add(new Flight(
                     flightNumber, destination, depTimeAndDate, flightDuration));
+
         }
         return flights;
     }
 
     public static void saveFlights(List<Flight> flights)
     {
-
+        try(PrintWriter pw = new PrintWriter("flights.txt"))
+        {
+            flights.stream().forEach(f -> pw.println(f.toString()));
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }
