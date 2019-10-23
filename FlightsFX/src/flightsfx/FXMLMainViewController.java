@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,11 +71,13 @@ public class FXMLMainViewController
     {
         buttonDelete.setDisable(true);
         flights = FXCollections.observableArrayList(loadFlights());
+
         filter.setItems(FXCollections.observableArrayList(
                 "Show all flights",
                 "Show flights to currently selected city",
                 "Show long flights", "Show next 5 flights",
                 "Show flight duration average"));
+        filter.getSelectionModel().selectFirst();
 
         colFlightNumber.setCellValueFactory(
                 new PropertyValueFactory("flightNumber"));
@@ -129,6 +132,43 @@ public class FXMLMainViewController
         {
             flights.remove(tableFlights.getSelectionModel().getSelectedIndex());
             saveFlights(flights);
+        }
+    }
+
+    @FXML
+    public void applyFilter(ActionEvent event) throws IOException
+    {
+        if(filter.getValue().equals("Show flights to currently selected city"))
+        {
+            if (!buttonDelete.isDisable())
+            {
+                TablePosition pos = tableFlights.getSelectionModel().
+                        getSelectedCells().get(0);
+                int row = pos.getRow();
+                TableColumn col = pos.getTableColumn();
+                String selectCity = (String) col.getCellObservableValue(row)
+                        .getValue();
+                int size = tableFlights.getItems().size();
+
+                //mejorar
+                for (int i = 0; i < size ; i++)
+                {
+                    String destiny = tableFlights.getItems().get(i)
+                            .getDestination();
+                    if (!destiny.equals(selectCity))
+                    {
+                        tableFlights.getItems().remove(i);
+                        size--;
+                        i = 0;
+                    }
+                }
+            }
+        }
+        if(filter.getValue().equals("Show all flights"))
+        {
+            flights = FXCollections.observableArrayList(loadFlights());
+
+            tableFlights.setItems(flights);
         }
     }
 
