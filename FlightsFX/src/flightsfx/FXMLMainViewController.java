@@ -2,6 +2,7 @@ package flightsfx;
 
 import flightsfx.model.Flight;
 import flightsfx.utils.FileUtils;
+import flightsfx.utils.SortByLocalDateTime;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,16 +11,17 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
-import java.io.File;
 import java.io.IOException;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static flightsfx.utils.FileUtils.loadFlights;
 import static flightsfx.utils.FileUtils.saveFlights;
@@ -95,9 +97,9 @@ public class FXMLMainViewController
                 obs, oldSelection, newSelection) ->
         {
             if (newSelection != null)
-            {
                 buttonDelete.setDisable(false);
-            }
+            else
+                buttonDelete.setDisable(true);
         });
     }
 
@@ -138,37 +140,63 @@ public class FXMLMainViewController
     @FXML
     public void applyFilter(ActionEvent event) throws IOException
     {
-        if(filter.getValue().equals("Show flights to currently selected city"))
+        switch (filter.getValue())
         {
-            if (!buttonDelete.isDisable())
-            {
-                TablePosition pos = tableFlights.getSelectionModel().
-                        getSelectedCells().get(0);
-                int row = pos.getRow();
-                TableColumn col = pos.getTableColumn();
-                String selectCity = (String) col.getCellObservableValue(row)
-                        .getValue();
-                int size = tableFlights.getItems().size();
+            case "Show all flights":
+                flights = FXCollections.observableArrayList(loadFlights());
+                tableFlights.setItems(flights);
+                break;
 
-                //mejorar
-                for (int i = 0; i < size ; i++)
+            case "Show flights to currently selected city":
+                if (!buttonDelete.isDisable())
                 {
-                    String destiny = tableFlights.getItems().get(i)
-                            .getDestination();
-                    if (!destiny.equals(selectCity))
-                    {
-                        tableFlights.getItems().remove(i);
-                        size--;
-                        i = 0;
-                    }
-                }
-            }
-        }
-        if(filter.getValue().equals("Show all flights"))
-        {
-            flights = FXCollections.observableArrayList(loadFlights());
+                    TablePosition pos = tableFlights.getSelectionModel().
+                            getSelectedCells().get(0);
+                    int row = pos.getRow();
+                    TableColumn col = pos.getTableColumn();
+                    String selectCity = (String) col.getCellObservableValue(row)
+                            .getValue();
 
-            tableFlights.setItems(flights);
+                    flights.removeIf(f -> !f.getDestination()
+                            .equals(selectCity));
+                    buttonDelete.setDisable(true);
+                }
+                break;
+
+            case "Show long flights":
+                flights.removeIf(f -> Integer.parseInt(
+                        f.getFlightDuration().split(":")[0]) < 3);
+                break;
+
+            case "Show next 5 flights":
+                SimpleDateFormat formatter =
+                        new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                Date date= new Date();
+                LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(),
+                        ZoneId.systemDefault());
+                flights.removeIf(f ->
+                    f.getDepTimeAndDateNoFormat().isBefore(ldt));
+                Collections.sort(flights, new SortByLocalDateTime());
+                while (flights.size() > 5)
+                    flights.remove(flights.size()-1);
+                break;
+            case "Show flight duration average":
+                long nanoSum = flights.get(0)
+                        .getFlightDurationNoFormat().toNanoOfDay();
+                for (Flight f : flights)
+                {
+                    nanoSum += f.getFlightDurationNoFormat().toNanoOfDay();
+                }
+                LocalTime average = LocalTime.ofNanoOfDay(
+                        nanoSum/(1+flights.size()));
+
+                Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+                dialog.setTitle("Average");
+                dialog.setHeaderText("Average flights time");
+                dialog.setContentText("The average of flights duration is: "
+                        +average);
+                dialog.show();
+                break;
         }
     }
 
@@ -181,12 +209,10 @@ public class FXMLMainViewController
             errorText.setText("the fields cannot be empty");
             return false;
         }
-
         try
         {
             LocalDateTime depTimeAndDate = LocalDateTime.parse(
                     departure.getText(), FileUtils.fmt);
-
         }
         catch (DateTimeParseException e)
         {

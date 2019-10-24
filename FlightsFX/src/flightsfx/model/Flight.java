@@ -50,6 +50,10 @@ public class Flight
         DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return  depTimeAndDate.format(form);
     }
+    public LocalDateTime getDepTimeAndDateNoFormat()
+    {
+        return this.depTimeAndDate;
+    }
 
     public void setDepTimeAndDate(LocalDateTime depTimeAndDate)
     {
@@ -62,6 +66,10 @@ public class Flight
         return  flightDuration.format(form);
     }
 
+    public LocalTime getFlightDurationNoFormat()
+    {
+        return this.flightDuration;
+    }
     public void setFlightDuration(LocalTime flightDuration)
     {
         this.flightDuration = flightDuration;
