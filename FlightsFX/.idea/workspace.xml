@@ -59,6 +59,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="module-info" />
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>

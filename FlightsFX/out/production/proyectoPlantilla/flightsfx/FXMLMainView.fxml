@@ -31,6 +31,7 @@
       <Button fx:id="buttonDelete" layoutX="625.0" layoutY="331.0" mnemonicParsing="false" onAction="#deleteFlight" text="Delete" />
       <Button fx:id="applyFilter" layoutX="506.0" layoutY="399.0" mnemonicParsing="false" onAction="#applyFilter" text="Apply Filter" />
       <Text fx:id="errorText" fill="#f81212" layoutX="14.0" layoutY="488.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+      <Button layoutX="625.0" layoutY="399.0" mnemonicParsing="false" onAction="#goToChar" text="Chart &gt;" />
 
    </children>
 </AnchorPane>

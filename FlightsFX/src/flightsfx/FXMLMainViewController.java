@@ -7,19 +7,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -103,6 +105,10 @@ public class FXMLMainViewController
         });
     }
 
+    public List<Flight> getFlights()
+    {
+        return flights;
+    }
     @FXML
     void addFlight(ActionEvent event)
     {
@@ -143,12 +149,11 @@ public class FXMLMainViewController
         switch (filter.getValue())
         {
             case "Show all flights":
-                flights = FXCollections.observableArrayList(loadFlights());
                 tableFlights.setItems(flights);
                 break;
 
             case "Show flights to currently selected city":
-                if (!buttonDelete.isDisable())
+                try
                 {
                     TablePosition pos = tableFlights.getSelectionModel().
                             getSelectedCells().get(0);
@@ -157,15 +162,23 @@ public class FXMLMainViewController
                     String selectCity = (String) col.getCellObservableValue(row)
                             .getValue();
 
-                    flights.removeIf(f -> !f.getDestination()
-                            .equals(selectCity));
+                    tableFlights.setItems(flights.filtered(p ->
+                            p.getDestination().equals(selectCity)));
+
                     buttonDelete.setDisable(true);
+                }
+                catch(Exception e)
+                {
+                    Alert dialog = new Alert(Alert.AlertType.ERROR);
+                    dialog.setTitle("ERROR");
+                    dialog.setHeaderText("No row selected");
+                    dialog.show();
                 }
                 break;
 
             case "Show long flights":
-                flights.removeIf(f -> Integer.parseInt(
-                        f.getFlightDuration().split(":")[0]) < 3);
+                tableFlights.setItems(flights.filtered(f -> Integer.parseInt(
+                        f.getFlightDuration().split(":")[0]) > 3));
                 break;
 
             case "Show next 5 flights":
@@ -174,11 +187,10 @@ public class FXMLMainViewController
                 Date date= new Date();
                 LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(),
                         ZoneId.systemDefault());
-                flights.removeIf(f ->
-                    f.getDepTimeAndDateNoFormat().isBefore(ldt));
+
+                tableFlights.setItems(flights.filtered(f ->
+                        f.getDepTimeAndDateNoFormat().isAfter(ldt)));
                 Collections.sort(flights, new SortByLocalDateTime());
-                while (flights.size() > 5)
-                    flights.remove(flights.size()-1);
                 break;
             case "Show flight duration average":
                 long nanoSum = flights.get(0)
@@ -198,6 +210,19 @@ public class FXMLMainViewController
                 dialog.show();
                 break;
         }
+    }
+
+    @FXML
+    void goToChar(ActionEvent event) throws IOException
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/flightsfx/chart/FXMLChart.fxml"));
+        Parent view1 = loader.load();
+        Scene view1Scene = new Scene(view1);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.hide();
+        stage.setScene(view1Scene);
+        stage.show();
     }
 
     public boolean controlError()
