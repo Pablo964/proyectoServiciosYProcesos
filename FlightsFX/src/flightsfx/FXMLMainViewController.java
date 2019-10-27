@@ -109,20 +109,22 @@ public class FXMLMainViewController
             {
                 buttonDelete.setDisable(false);
                 buttonUpdate.setDisable(false);
+
+                Flight flightSelected = tableFlights.getSelectionModel()
+                        .getSelectedItem();
+
+                flightNumber.setText(flightSelected.getFlightNumber());
+                destination.setText(flightSelected.getDestination());
+                departure.setText(flightSelected.getDepTimeAndDate());
+                duration.setText(flightSelected.getFlightDuration());
+
+                selected = tableFlights.getSelectionModel().getSelectedIndex();
             }
             else
             {
                 buttonDelete.setDisable(true);
                 buttonUpdate.setDisable(true);
             }
-            Flight flightSelected =
-                    tableFlights.getSelectionModel().getSelectedItem();
-            flightNumber.setText(flightSelected.getFlightNumber());
-            destination.setText(flightSelected.getDestination());
-            departure.setText(flightSelected.getDepTimeAndDate());
-            duration.setText(flightSelected.getFlightDuration());
-
-            selected = tableFlights.getSelectionModel().getSelectedIndex();
         });
     }
 
