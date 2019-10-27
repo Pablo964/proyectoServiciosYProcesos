@@ -10,9 +10,12 @@ public class FlightsFXMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLMainView.fxml"));
-
-        primaryStage.setScene(new Scene(root));
+        Parent root = FXMLLoader.load(getClass().getResource(
+                "FXMLMainView.fxml"));
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        scene.getStylesheets().add(getClass().getResource(
+                "style.css").toExternalForm());
         primaryStage.show();
     }
 

@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -22,16 +23,17 @@
       <TextField fx:id="destination" layoutX="431.0" layoutY="266.0" />
       <TextField fx:id="departure" layoutX="172.0" layoutY="331.0" promptText="dd/mm/yyyy hh:mm" />
       <TextField fx:id="duration" layoutX="431.0" layoutY="331.0" promptText="hh:mm" />
-      <Text layoutX="72.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Flight Number" />
-      <Text layoutX="94.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Departure" />
-      <Text layoutX="356.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destination" />
-      <Text layoutX="369.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" />
       <ChoiceBox fx:id="filter" layoutX="85.0" layoutY="399.0" prefHeight="25.0" prefWidth="376.0" />
       <Button fx:id="buttonAdd" layoutX="625.0" layoutY="266.0" mnemonicParsing="false" onAction="#addFlight" prefHeight="25.0" prefWidth="51.0" text="Add" />
       <Button fx:id="buttonDelete" layoutX="625.0" layoutY="331.0" mnemonicParsing="false" onAction="#deleteFlight" text="Delete" />
       <Button fx:id="applyFilter" layoutX="506.0" layoutY="399.0" mnemonicParsing="false" onAction="#applyFilter" text="Apply Filter" />
-      <Text fx:id="errorText" fill="#f81212" layoutX="14.0" layoutY="488.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-      <Button layoutX="625.0" layoutY="399.0" mnemonicParsing="false" onAction="#goToChar" text="Chart &gt;" />
+      <Text fx:id="errorText" fill="WHITE" layoutX="14.0" layoutY="488.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="error" />
+      <Button fx:id="buttonUpdate" layoutX="622.0" layoutY="387.0" mnemonicParsing="false" onAction="#update" text="Update" />
+      <Label layoutX="82.0" layoutY="270.0" styleClass="names" text="Flight Number" />
+      <Label layoutX="94.0" layoutY="335.0" styleClass="names" text="Departure" />
+      <Label layoutX="356.0" layoutY="270.0" styleClass="names" text="Destination" />
+      <Label layoutX="363.0" layoutY="335.0" styleClass="names" text="Duration" />
+      <Button layoutX="622.0" layoutY="450.0" mnemonicParsing="false" onAction="#goToChar" text="Chart &gt;" />
 
    </children>
 </AnchorPane>

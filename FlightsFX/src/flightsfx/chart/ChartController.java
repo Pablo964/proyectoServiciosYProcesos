@@ -57,6 +57,8 @@ public class ChartController
                 "/flightsfx/FXMLMainView.fxml"));
         Parent view1 = loader.load();
         Scene view1Scene = new Scene(view1);
+        view1Scene.getStylesheets().add(getClass().getResource(
+                "/flightsfx/style.css").toExternalForm());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.hide();
         stage.setScene(view1Scene);

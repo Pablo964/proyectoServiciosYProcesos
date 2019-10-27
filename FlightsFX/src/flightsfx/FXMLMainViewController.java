@@ -4,6 +4,7 @@ import flightsfx.model.Flight;
 import flightsfx.utils.FileUtils;
 import flightsfx.utils.SortByLocalDateTime;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,14 +20,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static flightsfx.utils.FileUtils.loadFlights;
-import static flightsfx.utils.FileUtils.saveFlights;
+import static flightsfx.utils.FileUtils.*;
 
 public class FXMLMainViewController
 {
@@ -69,11 +70,17 @@ public class FXMLMainViewController
     @FXML
     private Text errorText;
 
+    @FXML
+    private Button buttonUpdate;
+
     ObservableList<Flight> flights;
+    int selected;
 
     public void initialize() throws IOException
     {
         buttonDelete.setDisable(true);
+        buttonUpdate.setDisable(true);
+
         flights = FXCollections.observableArrayList(loadFlights());
 
         filter.setItems(FXCollections.observableArrayList(
@@ -99,9 +106,23 @@ public class FXMLMainViewController
                 obs, oldSelection, newSelection) ->
         {
             if (newSelection != null)
+            {
                 buttonDelete.setDisable(false);
+                buttonUpdate.setDisable(false);
+            }
             else
+            {
                 buttonDelete.setDisable(true);
+                buttonUpdate.setDisable(true);
+            }
+            Flight flightSelected =
+                    tableFlights.getSelectionModel().getSelectedItem();
+            flightNumber.setText(flightSelected.getFlightNumber());
+            destination.setText(flightSelected.getDestination());
+            departure.setText(flightSelected.getDepTimeAndDate());
+            duration.setText(flightSelected.getFlightDuration());
+
+            selected = tableFlights.getSelectionModel().getSelectedIndex();
         });
     }
 
@@ -119,7 +140,7 @@ public class FXMLMainViewController
             LocalDateTime fieldDeparture = LocalDateTime.parse(
                     departure.getText(), FileUtils.fmt);
             LocalTime fieldDuration = LocalTime.parse(duration.getText(),
-                    FileUtils.timeFormatter);
+                    timeFormatter);
             flights.add(new Flight(fieldFlightNumber, fieldDestination,
                     fieldDeparture, fieldDuration));
             saveFlights(flights);
@@ -141,6 +162,21 @@ public class FXMLMainViewController
             flights.remove(tableFlights.getSelectionModel().getSelectedIndex());
             saveFlights(flights);
         }
+    }
+
+    @FXML
+    void update(ActionEvent event)
+    {
+
+        flights.get(selected).setFlightNumber(flightNumber.getText());
+        flights.get(selected).setDestination(destination.getText());
+        flights.get(selected).setDepTimeAndDate(LocalDateTime.parse(
+            departure.getText(), FileUtils.fmt));
+        flights.get(selected).setFlightDuration(LocalTime.parse(
+                duration.getText(), FileUtils.timeFormatter));
+        tableFlights.setItems(flights);
+        tableFlights.refresh();
+        saveFlights(flights);
     }
 
     @FXML
@@ -188,8 +224,11 @@ public class FXMLMainViewController
                 LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(),
                         ZoneId.systemDefault());
 
-                tableFlights.setItems(flights.filtered(f ->
-                        f.getDepTimeAndDateNoFormat().isAfter(ldt)));
+                tableFlights.setItems(flights.stream().filter(f ->
+                        f.getDepTimeAndDateNoFormat().isAfter(ldt))
+                        .limit(5).collect(Collectors.collectingAndThen(
+                        Collectors.toList(), FXCollections::observableArrayList)));
+
                 Collections.sort(flights, new SortByLocalDateTime());
                 break;
             case "Show flight duration average":
@@ -202,11 +241,12 @@ public class FXMLMainViewController
                 LocalTime average = LocalTime.ofNanoOfDay(
                         nanoSum/(1+flights.size()));
 
+
                 Alert dialog = new Alert(Alert.AlertType.INFORMATION);
                 dialog.setTitle("Average");
                 dialog.setHeaderText("Average flights time");
                 dialog.setContentText("The average of flights duration is: "
-                        +average);
+                        +average.format(DateTimeFormatter.ofPattern("hh:mm:ss")));
                 dialog.show();
                 break;
         }
@@ -248,7 +288,7 @@ public class FXMLMainViewController
         try
         {
             LocalTime flightDuration = LocalTime.parse(duration.getText(),
-                    FileUtils.timeFormatter);
+                    timeFormatter);
         }
         catch (DateTimeException e)
         {
