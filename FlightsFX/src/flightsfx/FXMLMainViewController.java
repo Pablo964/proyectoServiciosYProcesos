@@ -29,16 +29,17 @@ import java.util.stream.Collectors;
 
 import static flightsfx.utils.FileUtils.*;
 
+/**
+ * Principal controller of the program that captures
+ * all the events that can occur
+ */
 public class FXMLMainViewController
 {
     @FXML
     private TableView<Flight> tableFlights;
 
     @FXML
-    private TableColumn<Flight, String> colFlightNumber;
-
-    @FXML
-    private TableColumn<Flight, String> colDestination;
+    private TableColumn<Flight, String> colFlightNumber, colDestination;
 
     @FXML
     private TableColumn<Flight, LocalDateTime> colDeparture;
@@ -50,32 +51,22 @@ public class FXMLMainViewController
     private ChoiceBox<String> filter;
 
     @FXML
-    private TextField flightNumber;
+    private TextField destination, flightNumber, departure, duration;
 
     @FXML
-    private TextField destination;
-
-    @FXML
-    private TextField departure;
-
-    @FXML
-    private TextField duration;
-
-    @FXML
-    private Button buttonDelete;
-
-    @FXML
-    private Button applyFilter;
+    private Button buttonDelete, buttonUpdate;
 
     @FXML
     private Text errorText;
 
-    @FXML
-    private Button buttonUpdate;
-
     ObservableList<Flight> flights;
     int selected;
 
+    /**
+     * Load some items of a table and contains a listener so that when
+     * selected item of a table fill in the fields.
+     * @throws IOException
+     */
     public void initialize() throws IOException
     {
         buttonDelete.setDisable(true);
@@ -128,10 +119,19 @@ public class FXMLMainViewController
         });
     }
 
+    /**
+     *
+     * @return return a list of flights
+     */
     public List<Flight> getFlights()
     {
         return flights;
     }
+
+    /**
+     * add flights to the observable list and to the file
+     * @param event
+     */
     @FXML
     void addFlight(ActionEvent event)
     {
@@ -148,6 +148,11 @@ public class FXMLMainViewController
             saveFlights(flights);
         }
     }
+
+    /**
+     * delete flights to the observable list and to the file
+     * @param event
+     */
     @FXML
     void deleteFlight(ActionEvent event)
     {
@@ -166,6 +171,10 @@ public class FXMLMainViewController
         }
     }
 
+    /**
+     * update a selected item for the table view
+     * @param event
+     */
     @FXML
     void update(ActionEvent event)
     {
@@ -181,6 +190,11 @@ public class FXMLMainViewController
         saveFlights(flights);
     }
 
+    /**
+     * apply filter for the search in the table
+     * @param event
+     * @throws IOException
+     */
     @FXML
     public void applyFilter(ActionEvent event) throws IOException
     {
@@ -254,6 +268,11 @@ public class FXMLMainViewController
         }
     }
 
+    /**
+     * Show a char with the number of times a flight destination appears
+     * @param event
+     * @throws IOException
+     */
     @FXML
     void goToChar(ActionEvent event) throws IOException
     {
@@ -267,6 +286,11 @@ public class FXMLMainViewController
         stage.show();
     }
 
+    /**
+     * Control the every errors controls all errors
+     * that may occur when entering data (or not entering them)
+     * @return
+     */
     public boolean controlError()
     {
         if (flightNumber.getText().equals("") || duration.getText().equals("")

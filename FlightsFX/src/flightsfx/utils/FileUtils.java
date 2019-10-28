@@ -10,6 +10,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * class used to load and save flight data
+ */
 public class FileUtils
 {
     public static DateTimeFormatter timeFormatter =
@@ -17,6 +20,11 @@ public class FileUtils
     public static DateTimeFormatter fmt =
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    /**
+     * load flights for the file
+     * @return return a list of flights
+     * @throws IOException
+     */
     public static List<Flight> loadFlights() throws IOException
     {
         ArrayList<Flight> flights = new ArrayList<>();
@@ -41,6 +49,10 @@ public class FileUtils
         return flights;
     }
 
+    /**
+     * save the flights from the list in the file
+     * @param flights
+     */
     public static void saveFlights(List<Flight> flights)
     {
         try(PrintWriter pw = new PrintWriter("flights.txt"))

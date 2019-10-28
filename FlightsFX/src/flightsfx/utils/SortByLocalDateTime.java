@@ -6,8 +6,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
+/**
+ *class to sort flights by date time
+ */
 public class SortByLocalDateTime implements Comparator<Flight>
 {
+    /**
+     * compare flights
+     * @param f1
+     * @param f2
+     * @return return a number to identify if it is well ordered or not
+     */
     @Override
     public int compare(Flight f1, Flight f2)
     {
